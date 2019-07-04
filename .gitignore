@@ -18,6 +18,8 @@
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea
+demo-di-ioc.iml
 
 # Gradle
 .idea/**/gradle.xml
