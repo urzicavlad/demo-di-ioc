@@ -12,6 +12,7 @@ public class CustomPostProcessor implements BeanPostProcessor {
 
     private Logger logger = LoggerFactory.getLogger(CustomPostProcessor.class);
 
+
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         logger.info("Do some stuff [BEFORE] with bean: {}" , beanName);
         return bean;

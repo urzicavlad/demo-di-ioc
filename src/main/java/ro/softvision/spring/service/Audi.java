@@ -8,7 +8,7 @@ public class Audi implements Car {
 
 
     @Autowired
-    private void setSpeedProvider(SpeedProvider speedProvider){
+    private void setSpeedProvider(SpeedProvider speedProvider) {
         this.speedProvider = speedProvider;
     }
 

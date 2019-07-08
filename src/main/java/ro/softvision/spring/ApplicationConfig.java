@@ -2,10 +2,9 @@ package ro.softvision.spring;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.AbstractApplicationContext;
 import ro.softvision.spring.service.Audi;
 import ro.softvision.spring.service.AudiSpeedProvider;
 import ro.softvision.spring.service.Employee;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 @Configuration
 @PropertySource("application.properties")
+@ComponentScan(basePackages = {"ro.softvision.spring"})
 public class ApplicationConfig {
 
 
@@ -46,4 +46,10 @@ public class ApplicationConfig {
     }
 
 
+    public static void main(String[] args) {
+
+        ApplicationContext aplicationContext =
+                new AnnotationConfigApplicationContext(ApplicationConfig.class);
+
+    }
 }
