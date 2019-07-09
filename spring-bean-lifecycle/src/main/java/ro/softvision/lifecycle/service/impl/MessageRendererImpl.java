@@ -2,13 +2,13 @@ package ro.softvision.lifecycle.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.softvision.lifecycle.postprocess.BeanExecutionPostProcessor;
+import ro.softvision.lifecycle.postprocess.beanpostprocess.CustomBeanPostProcessor;
 import ro.softvision.lifecycle.service.MessageProvider;
 import ro.softvision.lifecycle.service.MessageRenderer;
 
 public class MessageRendererImpl implements MessageRenderer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeanExecutionPostProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomBeanPostProcessor.class);
 
     private MessageProvider messageProvider;
 
