@@ -52,7 +52,6 @@ public class MessageProviderImpl implements MessageProvider, InitializingBean, D
 
     private void beanDestroyMethod(){
         LOGGER.warn("beanDestroyMethod() method was called!");
-
     }
 
 }
