@@ -12,6 +12,7 @@
     <modules>
         <module>spring-bean-lifecycle</module>
         <module>custom-di-ioc</module>
+        <module>spring-spEL</module>
     </modules>
 
     <properties>

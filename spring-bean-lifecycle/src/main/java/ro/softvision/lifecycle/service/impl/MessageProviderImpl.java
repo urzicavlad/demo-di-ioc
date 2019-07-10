@@ -15,15 +15,39 @@ public class MessageProviderImpl implements MessageProvider, InitializingBean, D
 
     private String message;
 
+    private Double randomNumber;
+
+    private String systemProperties;
+
 
     @Override
-    public String provide() {
+    public String provideMessage() {
         return this.message;
+    }
+
+    @Override
+    public Double provideRandomNumber() {
+        return this.randomNumber;
+    }
+
+    @Override
+    public String provideSystemProperties(){
+        return this.systemProperties;
     }
 
     @Override
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public void setRandomNumber(double randomNumber) {
+        this.randomNumber = randomNumber;
+    }
+
+    @Override
+    public void setSystemProperties(String systemProperties) {
+        this.systemProperties = systemProperties;
     }
 
     @Override

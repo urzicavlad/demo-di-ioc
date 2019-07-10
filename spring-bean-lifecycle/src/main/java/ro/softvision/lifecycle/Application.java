@@ -8,9 +8,10 @@ public class Application {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext annotationConfigApplicationContext =
                 new AnnotationConfigApplicationContext("ro.softvision.lifecycle");
+        annotationConfigApplicationContext.getEnvironment().addActiveProfile("dev");
         annotationConfigApplicationContext
                 .getBean(MessageRenderer.class)
-                .render();
+                .renderMessage();
         annotationConfigApplicationContext.registerShutdownHook();
     }
 

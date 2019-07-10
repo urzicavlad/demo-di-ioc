@@ -14,9 +14,21 @@ public class MessageRendererImpl implements MessageRenderer {
 
 
     @Override
-    public void render() {
-        final String message = this.messageProvider.provide();
+    public void renderMessage() {
+        final String message = this.messageProvider.provideMessage();
         LOGGER.info(message);
+    }
+
+    @Override
+    public void renderRandomNumber() {
+        final Double randomNumber = this.messageProvider.provideRandomNumber();
+        LOGGER.info("Random number {} ", randomNumber);
+    }
+
+    @Override
+    public void renderSystemOperation() {
+        final String systemOperation = this.messageProvider.provideSystemProperties();
+        LOGGER.info("Operation System: {} ", systemOperation);
     }
 
     @Override

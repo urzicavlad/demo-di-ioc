@@ -14,14 +14,24 @@ import ro.softvision.lifecycle.service.impl.MessageRendererImpl;
 @Configuration
 @ComponentScan("ro.softvision.lifecycle")
 @PropertySource("application.properties")
+@Profile({"dev", "qa"})
 public class ApplicationConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
 
+
+    private static final int DEFAULT_NUMBER_TO_MULTIPLY = 50;
+    private static final String EXPRESION = "#{T(java.lang.Math).random() * " + DEFAULT_NUMBER_TO_MULTIPLY + "}";
+    private static final String OPERATION_SYSTEM = "#{@systemProperties['os.name']}";
+
     @Bean(initMethod = "beanInitMethod", destroyMethod = "beanDestroyMethod")
-    MessageProviderImpl messageProvider(@Value("${message.value}") String message) {
+    MessageProviderImpl messageProvider(@Value("${message.value}") String message,
+                                        @Value(EXPRESION) Double randomNumber,
+                                        @Value(OPERATION_SYSTEM) String systemProperties) {
         MessageProviderImpl messageRenderer = new MessageProviderImpl();
         messageRenderer.setMessage(message);
+        messageRenderer.setRandomNumber(randomNumber);
+        messageRenderer.setSystemProperties(systemProperties);
         return messageRenderer;
     }
 
