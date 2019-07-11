@@ -1,6 +1,7 @@
 package ro.softvision.spEL.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class Inventor {
 
@@ -64,5 +65,16 @@ public class Inventor {
 
     public String[] getInventions() {
         return inventions;
+    }
+
+    @Override
+    public String toString() {
+        return "Inventor{" +
+                "name='" + name + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", inventions=" + Arrays.toString(inventions) +
+                ", birthdate=" + birthdate +
+                ", placeOfBirth=" + placeOfBirth +
+                '}';
     }
 }

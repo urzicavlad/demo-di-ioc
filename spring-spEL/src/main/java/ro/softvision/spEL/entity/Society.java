@@ -14,7 +14,7 @@ public class Society {
 
     private List<Inventor> members = new ArrayList<>();
 
-    private Map officers = new HashMap();
+    private Map<String, List<Inventor>> officers = new HashMap<>();
 
     public List getMembers() {
         return members;
@@ -30,6 +30,7 @@ public class Society {
 
     public void addInventor(Inventor inventor) {
         members.add(inventor);
+        officers.put(ADVISORS,List.of(inventor));
     }
 
     public void setName(String name) {

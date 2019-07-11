@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +43,7 @@ public class ExpressionEvaluationTest {
     // The constructor arguments are name, birthday, and nationality.
     private static final Inventor NIKOLA_TESLA = new Inventor("Nikola Tesla",
             LocalDate.of(1856, 7, 9), "Serbian",
-            new PlaceOfBirth("Smiljan","Croatia")
+            new PlaceOfBirth("Smiljan", "Croatia")
     );
 
     private static final Society SOCIETY = new Society();
@@ -323,22 +324,97 @@ public class ExpressionEvaluationTest {
     public void testPropertiesWhenIHaveListsOrArrays() {
 
         EvaluationContext teslaContext = new StandardEvaluationContext(NIKOLA_TESLA);
-
         Expression expressionForInvention = parser.parseExpression("inventions[1]");
         String secondInvention = expressionForInvention.getValue(teslaContext, String.class);
 
         LOGGER.debug("SECOND INVENTION OF NIKOLA TESLA : {}", secondInvention);
-
         assertEquals("Supersonic Airships Powered", secondInvention);
 
         EvaluationContext societyContext = new StandardEvaluationContext(SOCIETY);
-
         Expression expressionForFirstInventionsFormFirstInventor = parser.parseExpression("members[0].inventions[0]");
         String firstInvention = expressionForFirstInventionsFormFirstInventor.getValue(societyContext, String.class);
 
         LOGGER.debug("FIRST INVENTION OF NIKOLA TESLA : {}", firstInvention);
+        assertEquals("Wireless Energy Transmission", firstInvention);
+
+        Expression expressionThePlaceOfBirthCountryForFisrtAdvisor =
+                parser.parseExpression("offices['advisors'][0].placeOfBirth.country");
+
+        String countryOfBirhtForFirstAdvisor = expressionThePlaceOfBirthCountryForFisrtAdvisor.getValue(context, String.class);
+
+        LOGGER.debug("test {}", countryOfBirhtForFirstAdvisor);
 
 
+    }
 
+    @Test
+    public void testInLineLists() {
+        List numbers = (List) parser.parseExpression("{1,2,3,4,5}").getValue();
+        LOGGER.debug("LIST : {}", numbers);
+        assertNotNull(numbers);
+        List listOfListOfNumbers = (List) parser.parseExpression("{{1,2,3},{4,5}}").getValue();
+        LOGGER.debug("LIST OF LISTS : {}", listOfListOfNumbers);
+        assertNotNull(listOfListOfNumbers);
+    }
+
+    @Test
+    public void testInLineMaps() {
+        StandardEvaluationContext context = new StandardEvaluationContext(NIKOLA_TESLA);
+        Map inventorInfo = (Map) parser.parseExpression("{name:'Nikola', dob:'10-July-1856'}")
+                .getValue(context);
+        LOGGER.debug("MAP : {}", inventorInfo);
+        assertNotNull(inventorInfo);
+        Map mapOfMaps = (Map) parser.parseExpression("{name: {firstName:'Nikola', last: 'Tesla'}, dob:{day:10, month:'July', year:1856}}")
+                .getValue(context);
+        LOGGER.debug("MAP OF MAPS {}", mapOfMaps);
+        assertNotNull(mapOfMaps);
+    }
+
+    @Test
+    public void testArrayConstruction(){
+        // Array declaration
+        int[] numbers1 = (int[]) parser.parseExpression("new int[3]").getValue();
+        LOGGER.debug("NUMBERS_1 {}", Arrays.toString(numbers1));
+
+        // Array with initializer
+        int[] numbers2 = (int[]) parser.parseExpression("new int[] {1,2,3}").getValue();
+        LOGGER.debug("NUMBERS_2 {}", Arrays.toString(numbers2));
+
+        // Multi dimensional array --- ONLY DECLARATION! Using an initializer to build a multi-dimensional array is not currently supported
+        int[][] numbers3 = (int[][]) parser.parseExpression("new int[2][2]").getValue();
+        LOGGER.debug("NUMBERS_3 {}", Arrays.deepToString(numbers3));
+    }
+
+    @Test
+    public void testMethods() {
+        String bc = parser.parseExpression("'abc'.substring(1,3)").getValue(String.class);
+        LOGGER.debug("BC : {}",bc);
+        assertEquals("bc", bc);
+        Boolean isMember = parser.parseExpression("isMember('Nikola Tesla')")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("IS_MEMBER : {}",isMember);
+        assertNotNull(isMember);
+        assertTrue(isMember);
+    }
+
+    @Test
+    public void testOperators() {
+        // evaluates to true
+        Boolean trueValue = parser.parseExpression("2 == 2").getValue(Boolean.class);
+        LOGGER.debug("2 == 2 : {}",trueValue);
+        assertNotNull(trueValue);
+        assertTrue(trueValue);
+
+        // evaluates to false
+        Boolean falseValue = parser.parseExpression("2 < -5.0").getValue(Boolean.class);
+        LOGGER.debug("2 < -5.0 : {}",falseValue);
+        assertNotNull(falseValue);
+        assertFalse(falseValue);
+
+        // evaluates to true
+        Boolean trueValueSmart = parser.parseExpression("'black' < 'block'").getValue(Boolean.class);
+        LOGGER.debug("black < block : {}",trueValueSmart);
+        assertNotNull(trueValueSmart);
+        assertTrue(trueValueSmart);
     }
 }
