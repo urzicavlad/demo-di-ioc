@@ -1,6 +1,7 @@
 package ro.softvision.lifecycle;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import ro.softvision.lifecycle.service.MessageRenderer;
 
 public class Application {

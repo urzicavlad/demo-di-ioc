@@ -12,19 +12,19 @@ import ro.softvision.lifecycle.service.impl.MessageProviderImpl;
 import ro.softvision.lifecycle.service.impl.MessageRendererImpl;
 
 @Configuration
+@Import(BeanPostProcessorConfig.class)
 @ComponentScan("ro.softvision.lifecycle")
 @PropertySource("application.properties")
 @Profile({"dev", "qa"})
+@Description("Provides a basic example of a bean class configuration")
 public class ApplicationConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
-
 
     private static final int DEFAULT_NUMBER_TO_MULTIPLY = 50;
     private static final String EXPRESION = "#{T(java.lang.Math).random() * " + DEFAULT_NUMBER_TO_MULTIPLY + "}";
     private static final String OPERATION_SYSTEM = "#{@systemProperties['os.name']}";
 
     @Bean(initMethod = "beanInitMethod", destroyMethod = "beanDestroyMethod")
+    @Description("Provides a basic example of a bean")
     MessageProviderImpl messageProvider(@Value("${message.value}") String message,
                                         @Value(EXPRESION) Double randomNumber,
                                         @Value(OPERATION_SYSTEM) String systemProperties) {
@@ -43,34 +43,5 @@ public class ApplicationConfig {
         return messageRenderer;
     }
 
-    @Bean
-    // Additional implementation - directly.
-    static BeanFactoryPostProcessor beanFactoryPostProcessor() {
-        return beanFactory -> LOGGER.info("[DIRECTLY BEAN FACTORY POST PROCESSOR] called!");
-    }
-
-    @Bean
-    // Additional implementation - directly.
-    static BeanPostProcessor beanPostProcessorBeforeInitialization() {
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                LOGGER.info("[DIRECTLY - POST PROCESS BEFORE] called!");
-                return bean;
-            }
-        };
-    }
-
-    @Bean
-    // Additional implementation - directly.
-    static BeanPostProcessor beanPostProcessorAfterInitialization() {
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                LOGGER.info("[DIRECTLY - POST PROCESS AFTER] called!");
-                return bean;
-            }
-        };
-    }
 
 }
