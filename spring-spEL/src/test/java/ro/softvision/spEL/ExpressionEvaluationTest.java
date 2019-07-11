@@ -46,7 +46,7 @@ public class ExpressionEvaluationTest {
     private ApplicationContext context;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         String[] inventions = {
                 "Wireless Energy Transmission",
                 "Supersonic Airships Powered",
@@ -61,7 +61,7 @@ public class ExpressionEvaluationTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ((ConfigurableApplicationContext) context).registerShutdownHook();
     }
 
@@ -555,4 +555,5 @@ public class ExpressionEvaluationTest {
         LOGGER.debug("HELLO WORLD! REVERSED : {}", helloWordReversed);
         assertEquals("!dlroW olleH", helloWordReversed);
     }
+
 }
