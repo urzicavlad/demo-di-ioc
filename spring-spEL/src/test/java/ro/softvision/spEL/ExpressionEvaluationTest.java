@@ -18,16 +18,10 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ro.softvision.spEL.entity.Inventor;
-import ro.softvision.spEL.entity.PlaceOfBirth;
-import ro.softvision.spEL.entity.Society;
-import ro.softvision.spEL.entity.ValueBean;
+import ro.softvision.spEL.entity.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -49,7 +43,7 @@ public class ExpressionEvaluationTest {
     private static final Society SOCIETY = new Society();
 
     @Autowired
-    ApplicationContext context;
+    private ApplicationContext context;
 
     @Before
     public void setUp() throws Exception {
@@ -338,11 +332,11 @@ public class ExpressionEvaluationTest {
         assertEquals("Wireless Energy Transmission", firstInvention);
 
         Expression expressionThePlaceOfBirthCountryForFisrtAdvisor =
-                parser.parseExpression("offices['advisors'][0].placeOfBirth.country");
+                parser.parseExpression("officers['advisors'][0].placeOfBirth.country");
 
-        String countryOfBirhtForFirstAdvisor = expressionThePlaceOfBirthCountryForFisrtAdvisor.getValue(context, String.class);
+        String countryOfBirthForFirstAdvisor = expressionThePlaceOfBirthCountryForFisrtAdvisor.getValue(societyContext, String.class);
 
-        LOGGER.debug("test {}", countryOfBirhtForFirstAdvisor);
+        LOGGER.debug("test {}", countryOfBirthForFirstAdvisor);
 
 
     }
@@ -371,7 +365,7 @@ public class ExpressionEvaluationTest {
     }
 
     @Test
-    public void testArrayConstruction(){
+    public void testArrayConstruction() {
         // Array declaration
         int[] numbers1 = (int[]) parser.parseExpression("new int[3]").getValue();
         LOGGER.debug("NUMBERS_1 {}", Arrays.toString(numbers1));
@@ -388,11 +382,11 @@ public class ExpressionEvaluationTest {
     @Test
     public void testMethods() {
         String bc = parser.parseExpression("'abc'.substring(1,3)").getValue(String.class);
-        LOGGER.debug("BC : {}",bc);
+        LOGGER.debug("BC : {}", bc);
         assertEquals("bc", bc);
         Boolean isMember = parser.parseExpression("isMember('Nikola Tesla')")
                 .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
-        LOGGER.debug("IS_MEMBER : {}",isMember);
+        LOGGER.debug("IS_MEMBER : {}", isMember);
         assertNotNull(isMember);
         assertTrue(isMember);
     }
@@ -401,20 +395,164 @@ public class ExpressionEvaluationTest {
     public void testOperators() {
         // evaluates to true
         Boolean trueValue = parser.parseExpression("2 == 2").getValue(Boolean.class);
-        LOGGER.debug("2 == 2 : {}",trueValue);
+        LOGGER.debug("2 == 2 : {}", trueValue);
         assertNotNull(trueValue);
         assertTrue(trueValue);
 
         // evaluates to false
         Boolean falseValue = parser.parseExpression("2 < -5.0").getValue(Boolean.class);
-        LOGGER.debug("2 < -5.0 : {}",falseValue);
+        LOGGER.debug("2 < -5.0 : {}", falseValue);
         assertNotNull(falseValue);
         assertFalse(falseValue);
 
         // evaluates to true
         Boolean trueValueSmart = parser.parseExpression("'black' < 'block'").getValue(Boolean.class);
-        LOGGER.debug("black < block : {}",trueValueSmart);
+        LOGGER.debug("black < block : {}", trueValueSmart);
         assertNotNull(trueValueSmart);
         assertTrue(trueValueSmart);
+    }
+
+    @Test
+    public void testLogicalOperators() {
+        Boolean falseValue1 = parser.parseExpression("isMember('Nikola Tesla') and  isMember('Vlad Urzica')")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("TESLA [AND] VLAD ARE MEMBERS OF SOCIETY: {}", falseValue1);
+        assertNotNull(falseValue1);
+        assertFalse(falseValue1);
+
+        Boolean trueValue1 = parser.parseExpression("isMember('Nikola Tesla') and  1==1")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("TESLA IS A MEMBER OF SOCIETY [AND] 1==1: {}", trueValue1);
+        assertNotNull(trueValue1);
+        assertTrue(trueValue1);
+
+        Boolean trueValue2 = parser.parseExpression("isMember('Nikola Tesla') OR isMember('Vlad Urzica')")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("TESLA [OR] VLAD ARE MEMBERS OF SOCIETY: {}", trueValue2);
+        assertNotNull(trueValue2);
+        assertTrue(trueValue2);
+
+        Boolean falseValue2 = parser.parseExpression("isMember('Vlad Urzica') OR 1 != 1")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("VLAD ARE MEMBERS OF SOCIETY AND 1 IS NOT EQUAL WITH 1: {}", falseValue2);
+        assertNotNull(falseValue2);
+        assertFalse(falseValue2);
+
+        Boolean trueValue3 = parser.parseExpression("isMember('Nikola Tesla') and !isMember('Vlad Urizca')")
+                .getValue(new StandardEvaluationContext(SOCIETY), Boolean.class);
+        LOGGER.debug("TESLA IS A MEMBER OF SOCIETY [AND] VLAD NOT: {}", trueValue3);
+        assertNotNull(trueValue3);
+        assertTrue(trueValue3);
+    }
+
+
+    @Test
+    public void testMathematicalOperators() {
+
+        // ADDITION
+        Integer two = parser.parseExpression("1 + 1").getValue(Integer.class);
+        LOGGER.debug("TWO : {}", two);
+        assertEquals(Integer.valueOf(2), two);
+
+        // CONCATENATION
+        String testSpring = parser.parseExpression("'test' + 'Spring'").getValue(String.class);
+        LOGGER.debug("testSpring : {}", testSpring);
+        assertEquals("testSpring", testSpring);
+
+        // SUBTRACTION
+        Integer zero = parser.parseExpression("1 - 1").getValue(Integer.class);
+        Double zeroDouble = parser.parseExpression("1.0 - 1.0").getValue(Double.class);
+        LOGGER.debug("ZERO : {}", zero);
+        LOGGER.debug("ZERO_DOUBLE : {}", zeroDouble);
+        assertEquals(Integer.valueOf(0), zero);
+        assertEquals(Double.valueOf(0), zeroDouble);
+
+        // MULTIPLICATION
+        Integer ten = parser.parseExpression("5 * 2").getValue(Integer.class);
+        LOGGER.debug("TEN : {}", ten);
+        assertEquals(Integer.valueOf(10), ten);
+
+        // DIVISION
+        Integer one = parser.parseExpression("10 / 10").getValue(Integer.class);
+        LOGGER.debug("ONE : {}", one);
+        assertEquals(Integer.valueOf(1), one);
+
+        // MODULUS
+        Integer three = parser.parseExpression("7 % 4").getValue(Integer.class);
+        LOGGER.debug("THREE : {}", three);
+        assertEquals(Integer.valueOf(3), three);
+
+        // OPERATOR PRECEDENCE
+        Integer minusTwentyOne = parser.parseExpression("1 + 2 - 3 * 8").getValue(Integer.class);
+        LOGGER.debug("MINUS TWENTYONE : {}", minusTwentyOne);
+        assertEquals(Integer.valueOf(-21), minusTwentyOne);
+    }
+
+    @Test
+    public void testAssigment() {
+        Inventor inventor = new Inventor();
+        EvaluationContext context = new StandardEvaluationContext(inventor);
+
+        parser.parseExpression("name").setValue(context, "Vlad Urzica");
+        LOGGER.debug("INVENTOR NAME : {}", inventor.getName());
+        assertEquals("Vlad Urzica", inventor.getName());
+
+        // ALTERNATIVELY
+        String value = parser.parseExpression("Name = 'Nikolas Tesla'")
+                .getValue(context, String.class);
+        LOGGER.debug("INVENTOR NAME : {}", inventor.getName());
+        assertEquals("Nikolas Tesla", value);
+    }
+
+    @Test
+    public void testTypes() {
+        Class dateClass = parser.parseExpression("T(java.util.Date)").getValue(Class.class);
+        LOGGER.debug("DATE CLASS : {}", dateClass);
+        assertEquals(Date.class, dateClass);
+
+        Boolean trueValue = parser.parseExpression("T(java.math.RoundingMode).CEILING < T(java.math.RoundingMode).FLOOR").getValue(Boolean.class);
+        LOGGER.debug("TRUE : {}", trueValue);
+        assertNotNull(trueValue);
+        assertTrue(trueValue);
+    }
+
+
+    @Test
+    public void testConstructors() {
+        Inventor einstein = parser.parseExpression("new ro.softvision.spEL.entity.Inventor('Albert Einstein', 'German')").getValue(Inventor.class);
+        LOGGER.debug("EINSTEIN OBJECT : {}", einstein);
+        assertNotNull(einstein);
+    }
+
+    @Test
+    public void testVariables() {
+        EvaluationContext context = new StandardEvaluationContext(NIKOLA_TESLA);
+        context.setVariable("newName", "Mike Tesla");
+
+        parser.parseExpression("name = #newName").getValue(context);
+
+        LOGGER.debug("NEW NAME : {}", NIKOLA_TESLA.getName());
+        assertEquals("Mike Tesla", NIKOLA_TESLA.getName());
+
+        List<Integer> primes = List.of(2, 3, 5, 7, 11, 13, 17);
+        context.setVariable("primes", primes);
+
+        // all prime numbers > 10 from the list (using selection ?{...})
+        // evaluates to [11, 13, 17]
+        List primesGreaterThanTen = (List) parser.parseExpression("#primes.?[#this > 10]").getValue(context);
+        LOGGER.debug("PRIMES GREATER THAN TEN : {}" , primesGreaterThanTen);
+        assertNotNull(primesGreaterThanTen);
+        assertEquals(3, primesGreaterThanTen.size());
+    }
+
+    @Test
+    public void testFunctions() throws NoSuchMethodException {
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        context.registerFunction("reverse", StringUtils.class.getDeclaredMethod("reverseString", String.class));
+
+        String helloWordReversed = parser.parseExpression("#reverse('Hello World!')").getValue(context, String.class);
+
+        LOGGER.debug("HELLO WORLD! REVERSED : {}", helloWordReversed);
+        assertEquals("!dlroW olleH", helloWordReversed);
     }
 }
