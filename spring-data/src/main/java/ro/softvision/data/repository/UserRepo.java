@@ -2,11 +2,19 @@ package ro.softvision.data.repository;
 
 import ro.softvision.data.entity.User;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepo {
 
-    User save(User user);
+  Optional<User> findById(Long id);
 
-    List<User> findAll();
+  Optional<User> findByIdUsingNamedParameters(Long id);
+
+  Integer countUsers();
+
+  Set<User> findAll();
+
+  void printHtmlAllByName(String name);
+
 }

@@ -2,13 +2,12 @@ package ro.softvision.data.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -18,6 +17,7 @@ import java.sql.Driver;
 
 @Configuration
 @PropertySource("classpath:db/db.properties")
+@Profile("dev")
 public class DataSourceConfig {
 
     @Value("${driverClassName}")
@@ -68,16 +68,13 @@ public class DataSourceConfig {
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
-//        return new JdbcTemplate(dataSource());
-        return new JdbcTemplate(dataSourceEmbedded());
+        return new JdbcTemplate(dataSource());
+//        return new JdbcTemplate(dataSourceEmbedded());
     }
 
     @Bean
-    public DataSourceInitializer dataSourceInitializer(final DataSource dataSource){
-        final DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(databasePopulator());
-        return initializer;
+    public NamedParameterJdbcTemplate namedParameterJdbcTemplate(){
+        return new NamedParameterJdbcTemplate(dataSource());
     }
 
     private DatabasePopulator databasePopulator() {
