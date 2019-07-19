@@ -7,14 +7,14 @@ import java.util.Set;
 
 public interface UserRepo {
 
-  Optional<User> findById(Long id);
+    Optional<User> findById(Long id);
 
-  Optional<User> findByIdUsingNamedParameters(Long id);
+    Optional<User> findByIdUsingNamedParameters(Long id);
 
-  Integer countUsers();
+    Integer countUsers();
 
-  Set<User> findAll();
+    Set<User> findAll();
 
-  void printHtmlAllByName(String name);
+    void printHtmlAllByName(String name);
 
 }

@@ -5,12 +5,15 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 import javax.sql.DataSource;
 import java.sql.Driver;
@@ -18,7 +21,7 @@ import java.sql.Driver;
 @Configuration
 @PropertySource("classpath:db/db.properties")
 @Profile("dev")
-public class DataSourceConfig {
+public class DataSourceConfig implements TransactionManagementConfigurer {
 
     @Value("${driverClassName}")
     private String driverClassName;
@@ -73,8 +76,19 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public NamedParameterJdbcTemplate namedParameterJdbcTemplate(){
-        return new NamedParameterJdbcTemplate(dataSource());
+    public NamedParameterJdbcTemplate namedParameterJdbcTemplate(DataSource dataSource){
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+
+    @Bean
+    public PlatformTransactionManager defaultTxManager(DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public PlatformTransactionManager additionalTxManager(DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
     }
 
     private DatabasePopulator databasePopulator() {
@@ -82,5 +96,10 @@ public class DataSourceConfig {
         populator.addScript(schemaScript);
         populator.addScript(dataScript);
         return populator;
+    }
+
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        return defaultTxManager(dataSource());
     }
 }
