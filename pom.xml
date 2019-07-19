@@ -16,6 +16,8 @@
         <module>spring-aop</module>
         <module>spring-data</module>
         <module>spring-sercurity</module>
+        <module>spring-hibernate</module>
+        <module>spring-jpa</module>
     </modules>
 
     <properties>
