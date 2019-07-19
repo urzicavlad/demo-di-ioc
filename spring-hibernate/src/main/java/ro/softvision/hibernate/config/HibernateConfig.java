@@ -3,6 +3,8 @@ package ro.softvision.hibernate.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.Resource;
@@ -21,6 +23,8 @@ import java.util.Properties;
 @PropertySource("classpath:db/db.properties")
 @Profile("dev")
 public class HibernateConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateConfig.class);
 
     @Value("${driverClassName}")
     private String driverClassName;
@@ -64,12 +68,13 @@ public class HibernateConfig {
             DatabasePopulatorUtils.execute(databasePopulator(), hikariDataSource);
             return hikariDataSource;
         } catch (Exception e) {
+            LOGGER.error("Exception occurred at the creation of the connection", e);
             return null;
         }
     }
 
     @Bean
-    public SessionFactory sessionFactory(DataSource dataSource, Properties hibernateProperties){
+    public SessionFactory sessionFactory(DataSource dataSource, Properties hibernateProperties) {
         return new LocalSessionFactoryBuilder(dataSource)
                 .addAnnotatedClasses(User.class)
                 .addProperties(hibernateProperties)
@@ -77,7 +82,7 @@ public class HibernateConfig {
     }
 
     @Bean
-    public Properties hibernateProperties(){
+    public Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         hibernateProperties.put("hibernate.hbm2ddl.auto", "update");
@@ -88,7 +93,7 @@ public class HibernateConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(SessionFactory sessionFactory){
+    public PlatformTransactionManager transactionManager(SessionFactory sessionFactory) {
         return new HibernateTransactionManager(sessionFactory);
     }
 

@@ -1,8 +1,6 @@
 package ro.softvision.hibernate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ro.softvision.hibernate.entity.User;
 import ro.softvision.hibernate.repository.UserRepo;
 
