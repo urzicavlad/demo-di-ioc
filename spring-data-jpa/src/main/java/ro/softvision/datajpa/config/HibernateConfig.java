@@ -1,4 +1,4 @@
-package ro.softvision.hibernate.config;
+package ro.softvision.datajpa.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,12 +14,10 @@ import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import ro.softvision.hibernate.entity.User;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -79,14 +77,6 @@ public class HibernateConfig {
         }
     }
 
-//    @Bean
-//    public SessionFactory sessionFactory(DataSource dataSource, Properties hibernateProperties) {
-//        return new LocalSessionFactoryBuilder(dataSource)
-//                .addAnnotatedClasses(User.class)
-//                .addProperties(hibernateProperties)
-//                .buildSessionFactory();
-//    }
-
     @Bean
     public Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
@@ -98,10 +88,6 @@ public class HibernateConfig {
         return hibernateProperties;
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(SessionFactory sessionFactory) {
-        return new HibernateTransactionManager(sessionFactory);
-    }
 
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

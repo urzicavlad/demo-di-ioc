@@ -1,8 +1,9 @@
-package ro.softvision.hibernate.service;
+package ro.softvision.datajpa.service;
 
 import org.springframework.stereotype.Service;
-import ro.softvision.hibernate.entity.User;
-import ro.softvision.hibernate.repository.UserRepo;
+import ro.softvision.datajpa.entity.User;
+import ro.softvision.datajpa.repository.UserRepo;
+
 
 import java.util.Set;
 

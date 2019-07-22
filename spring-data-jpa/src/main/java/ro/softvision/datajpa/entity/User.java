@@ -1,11 +1,11 @@
-package ro.softvision.hibernate.entity;
+package ro.softvision.datajpa.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "P_USER")
-public final class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
